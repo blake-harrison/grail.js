@@ -17,7 +17,8 @@ PREREQ_3 = ''
         data = [
             { 
               rowname: "Row Name", // string holding the row name 
-              length: 10, // how many cells are occupied 
+              length: 10, // how many cells are occupied
+              target: 0,  
               prereq_1: 0, // prereq cells start at 0
               prereq_2: 0, 
               prereq_3: 0
@@ -46,8 +47,27 @@ function create_gantt(element,data) {
     job_head.appendChild(job_head_title);
     header_row.appendChild(job_head);
 
-    // adds the blank space to represent days
-    const total_days = 122 // THIS NEEDS TO BE DYNAMIC SOMEHOW
+    let total_days = 0 // total length the chart needs to be 
+    for(var obj in data) { // for each entry in data array
+        prereq_key = 0
+        target = 0
+        length = 0
+        for(var key in data[obj]) { // for each key in the json obj
+            if(key.match(/prereq.*/)) { // if reading a prereq
+                if(data[obj][key]>prereq_key) // if read key is latest (chronologically) prereq
+                   prereq_key = data[obj][key]  
+            } else if(key=='target') // if reading a target date
+                target = data[obj][key]
+            else if(key=='length') // if reading length
+                length = data[obj][key]
+        }
+        if((prereq_key + length)>target) { // if last prereq + length is farther out than target
+            if((prereq_key + length)>total_days) // if last prereq + length is farther out than current total
+                total_days = prereq_key + length // update current total
+        } else if(target>total_days) // if target is farther out than current total
+            total_days = target // update current total
+    } 
+    total_days = total_days + 10 // pads end
     /*
     for(let x = 0; x<total_days; x++) {
         let th = document.createElement("th");
@@ -62,10 +82,20 @@ function create_gantt(element,data) {
         let newrow = gantt_chart.insertRow();
         
         // create 1st r
-        let td1 = document.insertCell(0);
+        let td1 = newrow.insertCell(0);
         let rowname = document.createTextNode(item['rowname']);
         td1.appendChild(rowname)
+        // find the start date
 
+        // calculate the length of the colored portion
+
+        // determine the color (based on target)
+
+        // mark target date
+
+        // mark pre req dates
+
+        // fill rest with blank space
 
     })
 
