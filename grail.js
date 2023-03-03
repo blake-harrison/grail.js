@@ -68,18 +68,22 @@ function create_gantt(element,data) {
             total_days = target // update current total
     } 
     total_days = total_days + 10 // pads end
-    /*
+
+    // pads whitespace in the header row
     for(let x = 0; x<total_days; x++) {
         let th = document.createElement("th");
         let space = document.createTextNode("");
         th.appendChild(space)
         header_row.append(th)
     }    
-    */
+
+    // prepares table body
+    let gantt_body = gantt_chart.createTBody()
+
     // iterates through data, finding values and appending to table
     data.forEach(item => {
         // insert new row
-        let newrow = gantt_chart.insertRow();
+        let newrow = gantt_body.insertRow();
         
         // create 1st r
         let td1 = newrow.insertCell(0);
