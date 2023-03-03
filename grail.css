@@ -28,3 +28,8 @@ example css file that can be used to format the table
 #gantt_container_table tbody tr:nth-child(even) {
     background-color: white
 }
+
+#gantt_container tbody td {
+    border: 1px solid black;
+    width: 8px;
+}
