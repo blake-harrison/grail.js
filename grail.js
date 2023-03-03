@@ -104,11 +104,13 @@ function create_gantt(element,data) {
         let end_date = start_date + item['length'] 
 
         // determine the color (based on target)
+        target = item['target']
         if(end_date>target)
             item_color = LATE_COLOR;
         else if(end_date+3<target)
             item_color = EARLY_COLOR;
-        else item_color = ON_TIME_COLOR;
+        else
+            item_color = ON_TIME_COLOR;
 
         // generates the row
         day_offset = 1
