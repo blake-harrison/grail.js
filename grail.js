@@ -7,9 +7,9 @@ ON_TIME_COLOR = '#7FFF00' // chartreuse
 LATE_COLOR = '#FF0000' // red
 
 // prereq date markers - item cannot start until all 3 pass
-PREREQ_1 = ''
-PREREQ_2 = ''
-PREREQ_3 = ''
+PREREQ_1 = 'A'
+PREREQ_2 = 'B'
+PREREQ_3 = 'C'
 
 
 /* primary entry point - element is id of the parent element (should be empty div) 
@@ -70,7 +70,7 @@ function create_gantt(element,data) {
     total_days = total_days + 10 // pads end
 
     // pads whitespace in the header row
-    for(let x = 0; x<total_days; x++) {
+    for(let x = 0; x<total_days-1; x++) {
         let th = document.createElement("th");
         let space = document.createTextNode("");
         th.appendChild(space)
@@ -84,12 +84,14 @@ function create_gantt(element,data) {
     data.forEach(item => {
         // insert new row
         let newrow = gantt_body.insertRow();
-        
-        // create 1st r
+        // create 1st column
         let td1 = newrow.insertCell(0);
         let rowname = document.createTextNode(item['rowname']);
         td1.appendChild(rowname)
-        // find the start date
+        td1.style.width = "40px";
+        
+        // find the start date by comparing prereq dates to find the latest
+        let start_date = total_days
         let prereq_dates =[0,0,0]
         if(item['prereq_1'])
             prereq_dates[0] = item['prereq_1']
@@ -97,17 +99,54 @@ function create_gantt(element,data) {
             prereq_dates[1] = item['prereq_2']
         if(item['prereq_3'])
             prereq_dates[2] = item['prereq_3']
-        let start_date = Math.max.apply(Math,prereq_dates);
+        start_date = Math.max.apply(Math,prereq_dates);
         // calculate the length of the colored portion
+        let end_date = start_date + item['length'] 
 
         // determine the color (based on target)
+        if(end_date>target)
+            item_color = LATE_COLOR;
+        else if(end_date+3<target)
+            item_color = EARLY_COLOR;
+        else item_color = ON_TIME_COLOR;
 
-        // mark target date
+        // generates the row
+        day_offset = 1
+        let j = 0;
+        for(let i = 0; i<total_days-day_offset; i++) {
+            let icell = newrow.insertCell(i+1);
 
-        // mark pre req dates
+            // if i is a prereq date (ignored 0 prereq dates)
+            if(prereq_dates.includes(i) && i!=0) {
+                text_entry = "";
+                // finds which prereq date it is
+                switch(prereq_dates.indexOf(i)) {
+                    case 0:
+                        textentry = PREREQ_1;
+                        break;
+                    case 1:
+                        textentry = PREREQ_2;
+                        break;
+                    case 2:
+                        textentry = PREREQ_3;
+                        break; 
+                }
+                // adds the prereq text to the chart
+                let icell_text = document.createTextNode(textentry);
+                icell.appendChild(icell_text)
+            }
 
-        // fill rest with blank space
-
+            // if i is within the item time 
+            if(start_date<=i && i<=end_date) {
+                icell.style.backgroundColor = item_color                
+            }
+            // if i is the target date
+            if(i==item['target'])
+                icell.style.backgroundColor = TARGET_COLOR
+        
+            // adds tooltip to show offset from the start
+            icell.title = i;
+        }
     })
 
 }
