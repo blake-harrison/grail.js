@@ -90,7 +90,14 @@ function create_gantt(element,data) {
         let rowname = document.createTextNode(item['rowname']);
         td1.appendChild(rowname)
         // find the start date
-
+        let prereq_dates =[0,0,0]
+        if(item['prereq_1'])
+            prereq_dates[0] = item['prereq_1']
+        if(item['prereq_2'])
+            prereq_dates[1] = item['prereq_2']
+        if(item['prereq_3'])
+            prereq_dates[2] = item['prereq_3']
+        let start_date = Math.max.apply(Math,prereq_dates);
         // calculate the length of the colored portion
 
         // determine the color (based on target)
