@@ -1,0 +1,30 @@
+/*
+example css file that can be used to format the table
+*/
+
+#gantt_container_table {
+    border: 1px solid black;
+    overflow-x:scroll;
+    overflow-y:scroll;
+    border-collapse: collapse;
+    background-color: lightgray;
+    color: black;
+}
+
+#gantt_container_table thead {
+    text-align: center;
+    background-color: black;
+    color: white;
+}
+
+#gantt_container_table tbody tr {
+    border: 1px solid black;
+}
+
+#gantt_container_table tbody tr:first-child {
+    border: 1px solid black;
+}
+
+#gantt_container_table tbody tr:nth-child(even) {
+    background-color: white
+}
